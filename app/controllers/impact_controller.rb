@@ -1,5 +1,5 @@
 class ImpactController < ApplicationController
-  
+
   def cut(param_x, param_y)
   	/ Eiffel Tower coordinates/
   	set_cartesian_values(param_x, param_y)
@@ -12,16 +12,22 @@ class ImpactController < ApplicationController
   def index
   	p "params: #{params}"
   	loc = cut(params['lattitude'].to_i, params['longitude'].to_i)
-  	volume = ActiveRecord::Base.connection.execute("select tss.sawlogvolume,
-  		tss.pulpwoodvolume
-  		from treestandsummary as tss 
-  		left outer join treestand as ts 
-  		on tss.treestandid = ts.id 
-  		left outer join stand as  s on ts.standid = s.id 
-  		left outer join rtree_stand_geometry as r on r.id = s.id 
-  		where r.minx > "+ loc[0].to_s + " and r.maxx<"+ loc[0].to_s + " and r.miny > " + loc[1].to_s + " and r.maxy < " + loc[1].to_s)
-  	p "volume: #{volume}"
-  	render volume
+  	# volume = ActiveRecord::Base.connection.execute("select tss.sawlogvolume,
+  	# 	tss.pulpwoodvolume
+  	# 	from treestandsummary as tss
+  	# 	left outer join treestand as ts
+  	# 	on tss.treestandid = ts.id
+  	# 	left outer join stand as  s on ts.standid = s.id
+  	# 	left outer join rtree_stand_geometry as r on r.id = s.id
+  	# 	where r.minx <= "+ loc[0].to_s + " and r.maxx >= "+ loc[0].to_s + " and r.miny <= " + loc[1].to_s + " and r.maxy >= " + loc[1].to_s)
+  	volume = ActiveRecord::Base.connection.execute(
+      "select tss.sawlogvolume, tss.pulpwoodvolume, r.minx, r.maxx, r.miny, r.maxy
+      from treestandsummary as tss
+      left outer join treestand as ts on tss.treestandid = ts.treestandid
+      left outer join stand as  s on ts.standid = s.standid
+      left outer join rtree_stand_geometry as r on r.id = s.id
+      where r.minx <= "+ loc[0].to_s + " and r.maxx >= "+  loc[0].to_s + " and r.miny <= " + loc[1].to_s + " and r.maxy >= " + loc[1].to_s)
+  	render json: volume.to_json
   end
 
   def set_cartesian_values(lat, long)

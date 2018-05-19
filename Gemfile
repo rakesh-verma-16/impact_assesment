@@ -44,6 +44,9 @@ group :development, :test do
   gem 'sqlite3', '~> 1.3', '>= 1.3.11'
 end
 
+group :production do 
+  gem 'pg'         #gem to use in production environment
+end
 
 group :development do
   # Access an IRB console on exception pages or by using <%= console %> anywhere in the code.

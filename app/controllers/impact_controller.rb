@@ -66,8 +66,7 @@ class ImpactController < ApplicationController
       left outer join treestand as ts on tss.treestandid = ts.treestandid
       left outer join stand as  s on ts.standid = s.standid
       left outer join rtree_stand_geometry as r on r.id = s.id
-      limit 5")
-      # where r.minx <= "+ x.to_s + " and r.maxx >= "+  x.to_s + " and r.miny <= " + y.to_s + " and r.maxy >= " + y.to_s)
+      where r.minx <= "+ x.to_s + " and r.maxx >= "+  x.to_s + " and r.miny <= " + y.to_s + " and r.maxy >= " + y.to_s)
 
     for v in volume do
 
